@@ -105,3 +105,54 @@ The `.env.example` file provided in the Docker setup is extensive and covers a w
 - **Support**: For detailed configuration options and environment variable settings, refer to the `.env.example` file and the Docker Compose configuration files in the `docker` directory.
 
 This README aims to guide you through the deployment process using the new Docker Compose setup. For any issues or further assistance, please refer to the official documentation or contact support.
+
+
+### 161配置：
+#### 1. 使用本地elasticsearch向量
+   ```
+   VECTOR_STORE=elasticsearch
+   
+   ELASTICSEARCH_HOST=192.168.94.161
+   ELASTICSEARCH_PORT=29200
+   ELASTICSEARCH_USERNAME=
+   ELASTICSEARCH_PASSWORD=
+   KIBANA_PORT=25601
+   ```
+
+#### 2. 使用本地redis
+   ```
+   REDIS_HOST=192.168.94.161
+   REDIS_PORT=26379
+   REDIS_USERNAME=
+   REDIS_PASSWORD=123qweasd
+   REDIS_USE_SSL=false
+   REDIS_DB=1
+   
+   CELERY_BROKER_URL=redis://:123qweasd@192.168.94.161:26379/2
+   ```
+#### 3. 使用本地postgresql
+   ```
+   DB_USERNAME=postgres
+   DB_PASSWORD=123qweasd
+   DB_HOST=192.168.94.161
+   DB_PORT=25432
+   DB_DATABASE=dify
+   ```
+### 4. docker-compose-template.161.yaml
+   ```
+      ## db redis weaviate修改
+       profiles:
+         - XXX
+      ## api worker 删除 depends on
+   ```
+#### 5. 文件上传
+#### 6. 插件位置
+
+### 7. generate_docker_compose
+```
+修改main()，文件位置
+env_example_path = ".env.161.example"
+template_path = "docker-compose-template.161.yaml"
+output_path = "docker-compose.161.yaml"
+```
+
