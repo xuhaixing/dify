@@ -140,19 +140,26 @@ This README aims to guide you through the deployment process using the new Docke
    ```
 ### 4. docker-compose-template.161.yaml
    ```
-      ## db redis weaviate修改
+      ## db redis weaviate 修改
        profiles:
          - XXX
-      ## api worker 删除 depends on
+      ## api worker plugin_daemon 删除 depends on
    ```
 #### 5. 文件上传
 #### 6. 插件位置
 
-### 7. generate_docker_compose
+#### 7. generate_docker_compose
 ```
 修改main()，文件位置
 env_example_path = ".env.161.example"
 template_path = "docker-compose-template.161.yaml"
 output_path = "docker-compose.161.yaml"
+```
+
+#### 8. 初始化数据库
+```
+# postgres
+   dify_plugin
+   dify
 ```
 
