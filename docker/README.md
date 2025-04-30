@@ -107,7 +107,7 @@ The `.env.example` file provided in the Docker setup is extensive and covers a w
 This README aims to guide you through the deployment process using the new Docker Compose setup. For any issues or further assistance, please refer to the official documentation or contact support.
 
 
-### 161配置：
+### 161配置，使用本地数据库：
 #### 1. 使用本地elasticsearch向量
    ```
    VECTOR_STORE=elasticsearch
@@ -117,6 +117,8 @@ This README aims to guide you through the deployment process using the new Docke
    ELASTICSEARCH_USERNAME=
    ELASTICSEARCH_PASSWORD=
    KIBANA_PORT=25601
+   
+   COMPOSE_PROFILES=
    ```
 
 #### 2. 使用本地redis
