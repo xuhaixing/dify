@@ -112,7 +112,7 @@ This README aims to guide you through the deployment process using the new Docke
    ```
    VECTOR_STORE=elasticsearch
    
-   ELASTICSEARCH_HOST=https://192.168.94.161
+   ELASTICSEARCH_HOST=http://192.168.94.161
    ELASTICSEARCH_PORT=29200
    ELASTICSEARCH_USERNAME=elastic
    ELASTICSEARCH_PASSWORD=123qweasd
