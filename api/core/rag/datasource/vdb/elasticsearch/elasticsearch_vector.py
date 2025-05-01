@@ -184,6 +184,17 @@ class ElasticSearchVector(BaseVector):
 
             if not self._client.indices.exists(index=self._collection_name):
                 dim = len(embeddings[0])
+                index_options = {
+                      "type": "hnsw",
+                      "m": 16,
+                      "ef_construction": 100
+                    }
+                if dim > 600:
+                    index_options = {
+                        "type": "int8_hnsw",
+                        "m": 16,
+                        "ef_construction": 100
+                    }
                 mappings = {
                     "properties": {
                         Field.CONTENT_KEY.value: {"type": "text"},
@@ -192,6 +203,7 @@ class ElasticSearchVector(BaseVector):
                             "dims": dim,
                             "index": True,
                             "similarity": "cosine",
+                            "index_options": index_options
                         },
                         Field.METADATA_KEY.value: {
                             "type": "object",
