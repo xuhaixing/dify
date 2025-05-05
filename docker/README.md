@@ -142,10 +142,12 @@ This README aims to guide you through the deployment process using the new Docke
    ```
 ### 4. docker-compose-template.161.yaml
    ```
-      ## db redis weaviate 修改
+      ## db redis weaviate 修改，指定profiles
        profiles:
          - XXX
       ## api worker plugin_daemon 删除 depends on
+      ## plugin_daemon加入暴露5002端口
+      - "${PLUGIN_DAEMON_URL_PORT:-5002}:${PLUGIN_DAEMON_URL_PORT:-5002}"
    ```
 #### 5. 文件上传
 #### 6. 插件位置
@@ -160,8 +162,9 @@ output_path = "docker-compose.161.yaml"
 
 #### 8. 初始化数据库
 ```
-# postgres
-   dify_plugin
-   dify
+postgres
+dify_plugin
+dify
 ```
-
+### elasticsearch_vector.py
+ 加入int8_hnsw配置
