@@ -150,6 +150,10 @@ This README aims to guide you through the deployment process using the new Docke
       - "${PLUGIN_DAEMON_URL_PORT:-5002}:${PLUGIN_DAEMON_URL_PORT:-5002}"
    ```
 #### 5. 文件上传
+```
+更改：STORAGE_TYPE，aliyun oss
+
+```
 #### 6. 插件位置
 
 #### 7. generate_docker_compose
@@ -168,3 +172,6 @@ dify
 ```
 ### elasticsearch_vector.py
  加入int8_hnsw配置
+
+### CacheEmbedding
+ 设置  max_chunks = 1 ，ada-002不支持批量，应该在插件那里改，暂时先调整这里
