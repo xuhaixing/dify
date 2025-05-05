@@ -660,7 +660,7 @@ services:
       TENCENT_COS_REGION: ${PLUGIN_TENCENT_COS_REGION:-}
     ports:
       - "${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}:${PLUGIN_DEBUGGING_PORT:-5003}"
-      - "${PLUGIN_DAEMON_URL_PORT:-5002}:${PLUGIN_DAEMON_URL_PORT:-5002}"
+      - "${EXPOSE_PLUGIN_DAEMON_PORT:-5002}:${PLUGIN_DAEMON_PORT:-5002}"
     volumes:
       - ./volumes/plugin_daemon:/app/storage
 
