@@ -107,7 +107,9 @@ The `.env.example` file provided in the Docker setup is extensive and covers a w
 This README aims to guide you through the deployment process using the new Docker Compose setup. For any issues or further assistance, please refer to the official documentation or contact support.
 
 
-### 161配置，使用本地数据库：
+## 161配置，使用本地数据库：
+### .env修改
+cp /docker/.env.example /docker/.env.161.example
 #### 1. 使用本地elasticsearch向量
    ```
    VECTOR_STORE=elasticsearch
@@ -121,7 +123,7 @@ This README aims to guide you through the deployment process using the new Docke
    COMPOSE_PROFILES=
    ```
 
-#### 2. 使用本地redis
+#### 使用本地redis
    ```
    REDIS_HOST=192.168.94.161
    REDIS_PORT=26379
@@ -132,7 +134,7 @@ This README aims to guide you through the deployment process using the new Docke
    
    CELERY_BROKER_URL=redis://:123qweasd@192.168.94.161:26379/2
    ```
-#### 3. 使用本地postgresql
+#### 使用本地postgresql
    ```
    DB_USERNAME=postgres
    DB_PASSWORD=123qweasd
@@ -140,23 +142,36 @@ This README aims to guide you through the deployment process using the new Docke
    DB_PORT=25432
    DB_DATABASE=dify
    ```
-### 4. docker-compose-template.161.yaml
-   ```
-      ## db redis weaviate 修改，指定profiles
-       profiles:
-         - XXX
-      ## api worker plugin_daemon 删除 depends on
-      ## plugin_daemon加入暴露5002端口
-      - "${PLUGIN_DAEMON_URL_PORT:-5002}:${PLUGIN_DAEMON_URL_PORT:-5002}"
-   ```
-#### 5. 文件上传
+
+#### 文件上传
 ```
 更改：STORAGE_TYPE，aliyun oss
 
 ```
-#### 6. 插件位置
+#### 插件位置
+```
+PLUGIN_STORAGE_TYPE=aws_s3
 
-#### 7. generate_docker_compose
+PLUGIN_INSTALLED_PATH=difyplugintest
+#不要嵌套在PLUGIN_INSTALLED_PATH目录下，会报错
+PLUGIN_PACKAGE_CACHE_PATH=difypluginpackagestest
+PLUGIN_MEDIA_CACHE_PATH=difyassetstest
+
+PLUGIN_STORAGE_OSS_BUCKET=XXXX
+# Plugin oss s3 credentials
+PLUGIN_S3_USE_AWS_MANAGED_IAM=false
+PLUGIN_S3_ENDPOINT=XXXX
+PLUGIN_S3_USE_PATH_STYLE=false
+PLUGIN_AWS_ACCESS_KEY=XX
+PLUGIN_AWS_SECRET_KEY=XXXX
+PLUGIN_AWS_REGION=us-east-1
+```
+
+
+
+### generate_docker_compose修改
+
+#### 1. generate_docker_compose
 ```
 修改main()，文件位置
 env_example_path = ".env.161.example"
@@ -164,14 +179,71 @@ template_path = "docker-compose-template.161.yaml"
 output_path = "docker-compose.161.yaml"
 ```
 
-#### 8. 初始化数据库
+### docker-compose-template.161.yaml
+cp docker-compose-template.yaml docker-compose-template.161.yaml
+
+#### 修改profile
+   ```
+      ## db redis weaviate 修改，指定profiles
+       profiles:
+         - XXX
+   ```
+
+#### 删除depends on
 ```
-postgres
+ ## api worker plugin_daemon 删除 depends on
+```
+
+#### plugin_daemon加入暴露5002端口
+```
+ - "${PLUGIN_DAEMON_URL_PORT:-5002}:${PLUGIN_DAEMON_URL_PORT:-5002}"
+```
+
+
+#### 修改network
+```
+networks:
+  # create a network between sandbox, api and ssrf_proxy, and can not access outside.
+  ssrf_proxy_network:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.247.2.0/24
+  milvus:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.247.3.0/24
+  opensearch-net:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.247.4.0/24
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.247.5.0/24
+```
+
+### 初始化数据库
+```
+# postgres数据库
 dify_plugin
 dify
 ```
+
+
+
+## 日常修改：
+
 ### elasticsearch_vector.py
  加入int8_hnsw配置
 
 ### CacheEmbedding
  设置  max_chunks = 1 ，ada-002不支持批量，应该在插件那里改，暂时先调整这里
+
+### 新增S3_OSS_PATH
+API项目，上传S3新增此路径
