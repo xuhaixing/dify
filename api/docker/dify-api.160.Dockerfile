@@ -7,7 +7,7 @@ WORKDIR /app/api
 ENV UV_VERSION=0.6.14
 
 RUN rm -rf /etc/apt/sources.list.d/*
-ADD container/sources.list /etc/apt/
+ADD docker/sources.list /etc/apt/
 
 RUN \
     apt-get update \
@@ -47,15 +47,14 @@ FROM base AS production
 ENV FLASK_APP=app.py
 ENV EDITION=SELF_HOSTED
 ENV DEPLOY_ENV=PRODUCTION
-ENV CONSOLE_API_URL=http://127.0.0.1:5001
-ENV CONSOLE_WEB_URL=http://127.0.0.1:3000
-ENV SERVICE_API_URL=http://127.0.0.1:5001
-ENV APP_WEB_URL=http://127.0.0.1:3000
+# ENV CONSOLE_API_URL=http://127.0.0.1:5001
+# ENV CONSOLE_WEB_URL=http://127.0.0.1:3000
+# ENV SERVICE_API_URL=http://127.0.0.1:5001
+# ENV APP_WEB_URL=http://127.0.0.1:3000
 ENV MODE=api
 ENV MIGRATION_ENABLED=true
 
-ENV DIFY_PORT=15001
-EXPOSE 15001
+EXPOSE 5001
 
 # set timezone
 ENV TZ=UTC
