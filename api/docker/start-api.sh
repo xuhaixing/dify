@@ -18,10 +18,10 @@ fi
 
 docker rmi xuhaixing/dify-api:$version
 
-dockerfile_path="docker/dify-api.${env}.Dockerfile"
+dockerfile_path="docker/dify-api.Dockerfile"
 
 
-docker build -f $dockerfile_path -t xuhaixing/dify-api:$version .
+docker build -f $dockerfile_path --build-arg APP_ENV=$env -t xuhaixing/dify-api:$version .
 
 docker stop dify-api dify-worker
 docker rm dify-api dify-worker

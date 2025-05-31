@@ -70,7 +70,8 @@ ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
 # Copy source code
 COPY . /app/api/
-RUN mv /app/api/docker/160.env /app/api/.env
+ARG APP_ENV=160
+RUN mv /app/api/docker/$APP_ENV.env /app/api/.env
 
 RUN mv /app/api/docker/nltk_data /usr/share/nltk_data
 ENV NLTK_DATA=/usr/share/nltk_data
