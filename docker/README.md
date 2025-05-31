@@ -4,14 +4,12 @@ Welcome to the new `docker` directory for deploying Dify using Docker Compose. T
 
 ### What's Updated
 
-- **Certbot Container**: `docker-compose.yaml` now contains `certbot` for managing SSL certificates. This container automatically renews certificates and ensures secure HTTPS connections.  
-  For more information, refer `docker/certbot/README.md`.
-
+- **Certbot Container**: `docker-compose.yaml` now contains `certbot` for managing SSL certificates. This container automatically renews certificates and ensures secure HTTPS connections.For more information, refer `docker/certbot/README.md`.
 - **Persistent Environment Variables**: Environment variables are now managed through a `.env` file, ensuring that your configurations persist across deployments.
 
-  > What is `.env`? </br> </br>
+  > What is `.env`? `</br>` `</br>`
   > The `.env` file is a crucial component in Docker and Docker Compose environments, serving as a centralized configuration file where you can define environment variables that are accessible to the containers at runtime. This file simplifies the management of environment settings across different stages of development, testing, and production, providing consistency and ease of configuration to deployments.
-
+  >
 - **Unified Vector Database Services**: All vector database services are now managed from a single Docker Compose file `docker-compose.yaml`. You can switch between different vector databases by setting the `VECTOR_STORE` environment variable in your `.env` file.
 - **Mandatory .env File**: A `.env` file is now required to run `docker compose up`. This file is crucial for configuring your deployment and for any custom settings to persist through upgrades.
 
@@ -19,14 +17,14 @@ Welcome to the new `docker` directory for deploying Dify using Docker Compose. T
 
 1. **Prerequisites**: Ensure Docker and Docker Compose are installed on your system.
 2. **Environment Setup**:
-    - Navigate to the `docker` directory.
-    - Copy the `.env.example` file to a new file named `.env` by running `cp .env.example .env`.
-    - Customize the `.env` file as needed. Refer to the `.env.example` file for detailed configuration options.
+   - Navigate to the `docker` directory.
+   - Copy the `.env.example` file to a new file named `.env` by running `cp .env.example .env`.
+   - Customize the `.env` file as needed. Refer to the `.env.example` file for detailed configuration options.
 3. **Running the Services**:
-    - Execute `docker compose up` from the `docker` directory to start the services.
-    - To specify a vector database, set the `VECTOR_STORE` variable in your `.env` file to your desired vector database service, such as `milvus`, `weaviate`, or `opensearch`.
+   - Execute `docker compose up` from the `docker` directory to start the services.
+   - To specify a vector database, set the `VECTOR_STORE` variable in your `.env` file to your desired vector database service, such as `milvus`, `weaviate`, or `opensearch`.
 4. **SSL Certificate Setup**:
-    - Refer `docker/certbot/README.md` to set up SSL certificates using Certbot.
+   - Refer `docker/certbot/README.md` to set up SSL certificates using Certbot.
 5. **OpenTelemetry Collector Setup**:
    - Change `ENABLE_OTEL` to `true` in `.env`.
    - Configure `OTLP_BASE_ENDPOINT` properly.
@@ -34,12 +32,12 @@ Welcome to the new `docker` directory for deploying Dify using Docker Compose. T
 ### How to Deploy Middleware for Developing Dify
 
 1. **Middleware Setup**:
-    - Use the `docker-compose.middleware.yaml` for setting up essential middleware services like databases and caches.
-    - Navigate to the `docker` directory.
-    - Ensure the `middleware.env` file is created by running `cp middleware.env.example middleware.env` (refer to the `middleware.env.example` file).
+   - Use the `docker-compose.middleware.yaml` for setting up essential middleware services like databases and caches.
+   - Navigate to the `docker` directory.
+   - Ensure the `middleware.env` file is created by running `cp middleware.env.example middleware.env` (refer to the `middleware.env.example` file).
 2. **Running Middleware Services**:
-    - Navigate to the `docker` directory.
-    - Execute `docker compose -f docker-compose.middleware.yaml --profile weaviate -p dify up -d` to start the middleware services. (Change the profile to other vector database if you are not using weaviate)
+   - Navigate to the `docker` directory.
+   - Execute `docker compose -f docker-compose.middleware.yaml --profile weaviate -p dify up -d` to start the middleware services. (Change the profile to other vector database if you are not using weaviate)
 
 ### Migration for Existing Users
 
@@ -47,9 +45,9 @@ For users migrating from the `docker-legacy` setup:
 
 1. **Review Changes**: Familiarize yourself with the new `.env` configuration and Docker Compose setup.
 2. **Transfer Customizations**:
-    - If you have customized configurations such as `docker-compose.yaml`, `ssrf_proxy/squid.conf`, or `nginx/conf.d/default.conf`, you will need to reflect these changes in the `.env` file you create.
+   - If you have customized configurations such as `docker-compose.yaml`, `ssrf_proxy/squid.conf`, or `nginx/conf.d/default.conf`, you will need to reflect these changes in the `.env` file you create.
 3. **Data Migration**:
-    - Ensure that data from services like databases and caches is backed up and migrated appropriately to the new structure if necessary.
+   - Ensure that data from services like databases and caches is backed up and migrated appropriately to the new structure if necessary.
 
 ### Overview of `.env`
 
@@ -64,38 +62,39 @@ For users migrating from the `docker-legacy` setup:
 The `.env.example` file provided in the Docker setup is extensive and covers a wide range of configuration options. It is structured into several sections, each pertaining to different aspects of the application and its services. Here are some of the key sections and variables:
 
 1. **Common Variables**:
-    - `CONSOLE_API_URL`, `SERVICE_API_URL`: URLs for different API services.
-    - `APP_WEB_URL`: Frontend application URL.
-    - `FILES_URL`: Base URL for file downloads and previews.
 
+   - `CONSOLE_API_URL`, `SERVICE_API_URL`: URLs for different API services.
+   - `APP_WEB_URL`: Frontend application URL.
+   - `FILES_URL`: Base URL for file downloads and previews.
 2. **Server Configuration**:
-    - `LOG_LEVEL`, `DEBUG`, `FLASK_DEBUG`: Logging and debug settings.
-    - `SECRET_KEY`: A key for encrypting session cookies and other sensitive data.
 
+   - `LOG_LEVEL`, `DEBUG`, `FLASK_DEBUG`: Logging and debug settings.
+   - `SECRET_KEY`: A key for encrypting session cookies and other sensitive data.
 3. **Database Configuration**:
-    - `DB_USERNAME`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`: PostgreSQL database credentials and connection details.
 
+   - `DB_USERNAME`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`: PostgreSQL database credentials and connection details.
 4. **Redis Configuration**:
-    - `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`: Redis server connection settings.
 
+   - `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`: Redis server connection settings.
 5. **Celery Configuration**:
-    - `CELERY_BROKER_URL`: Configuration for Celery message broker.
 
+   - `CELERY_BROKER_URL`: Configuration for Celery message broker.
 6. **Storage Configuration**:
-    - `STORAGE_TYPE`, `S3_BUCKET_NAME`, `AZURE_BLOB_ACCOUNT_NAME`: Settings for file storage options like local, S3, Azure Blob, etc.
 
+   - `STORAGE_TYPE`, `S3_BUCKET_NAME`, `AZURE_BLOB_ACCOUNT_NAME`: Settings for file storage options like local, S3, Azure Blob, etc.
 7. **Vector Database Configuration**:
-    - `VECTOR_STORE`: Type of vector database (e.g., `weaviate`, `milvus`).
-    - Specific settings for each vector store like `WEAVIATE_ENDPOINT`, `MILVUS_URI`.
 
+   - `VECTOR_STORE`: Type of vector database (e.g., `weaviate`, `milvus`).
+   - Specific settings for each vector store like `WEAVIATE_ENDPOINT`, `MILVUS_URI`.
 8. **CORS Configuration**:
-    - `WEB_API_CORS_ALLOW_ORIGINS`, `CONSOLE_CORS_ALLOW_ORIGINS`: Settings for cross-origin resource sharing.
 
+   - `WEB_API_CORS_ALLOW_ORIGINS`, `CONSOLE_CORS_ALLOW_ORIGINS`: Settings for cross-origin resource sharing.
 9. **OpenTelemetry Configuration**:
-    - `ENABLE_OTEL`: Enable OpenTelemetry collector in api.
-    - `OTLP_BASE_ENDPOINT`: Endpoint for your OTLP exporter.
-  
+
+   - `ENABLE_OTEL`: Enable OpenTelemetry collector in api.
+   - `OTLP_BASE_ENDPOINT`: Endpoint for your OTLP exporter.
 10. **Other Service-Specific Environment Variables**:
+
     - Each service like `nginx`, `redis`, `db`, and vector databases have specific environment variables that are directly referenced in the `docker-compose.yaml`.
 
 ### Additional Information
@@ -106,143 +105,16 @@ The `.env.example` file provided in the Docker setup is extensive and covers a w
 This README aims to guide you through the deployment process using the new Docker Compose setup. For any issues or further assistance, please refer to the official documentation or contact support.
 
 
-## 161配置，使用本地数据库：
-### .env修改
-cp /docker/.env.example /docker/.env.161.example
-#### 1. 使用本地elasticsearch向量
-   ```
-   VECTOR_STORE=elasticsearch
-   
-   ELASTICSEARCH_HOST=http://192.168.94.161
-   ELASTICSEARCH_PORT=29200
-   ELASTICSEARCH_USERNAME=elastic
-   ELASTICSEARCH_PASSWORD=123qweasd
-   KIBANA_PORT=25601
-   
-   COMPOSE_PROFILES=
-   ```
-
-#### 使用本地redis
-   ```
-   REDIS_HOST=192.168.94.161
-   REDIS_PORT=26379
-   REDIS_USERNAME=
-   REDIS_PASSWORD=123qweasd
-   REDIS_USE_SSL=false
-   REDIS_DB=1
-   
-   CELERY_BROKER_URL=redis://:123qweasd@192.168.94.161:26379/2
-   ```
-#### 使用本地postgresql
-   ```
-   DB_USERNAME=postgres
-   DB_PASSWORD=123qweasd
-   DB_HOST=192.168.94.161
-   DB_PORT=25432
-   DB_DATABASE=dify
-   ```
-
-#### 文件上传
-```
-更改：STORAGE_TYPE，aliyun oss
-
-```
-#### 插件位置
-```
-PLUGIN_STORAGE_TYPE=aws_s3
-
-PLUGIN_INSTALLED_PATH=difyplugintest
-#不要嵌套在PLUGIN_INSTALLED_PATH目录下，会报错
-PLUGIN_PACKAGE_CACHE_PATH=difypluginpackagestest
-PLUGIN_MEDIA_CACHE_PATH=difyassetstest
-
-PLUGIN_STORAGE_OSS_BUCKET=XXXX
-# Plugin oss s3 credentials
-PLUGIN_S3_USE_AWS_MANAGED_IAM=false
-PLUGIN_S3_ENDPOINT=XXXX
-PLUGIN_S3_USE_PATH_STYLE=false
-PLUGIN_AWS_ACCESS_KEY=XX
-PLUGIN_AWS_SECRET_KEY=XXXX
-PLUGIN_AWS_REGION=us-east-1
-```
-
-
-
-### generate_docker_compose修改
-
-#### 1. generate_docker_compose
-```
-修改main()，文件位置
-env_example_path = ".env.161.example"
-template_path = "docker-compose-template.161.yaml"
-output_path = "docker-compose.161.yaml"
-```
-
-### docker-compose-template.161.yaml
-cp docker-compose-template.yaml docker-compose-template.161.yaml
-
-#### 修改profile
-   ```
-      ## db redis weaviate 修改，指定profiles
-       profiles:
-         - XXX
-   ```
-
-#### 删除depends on
-```
- ## api worker plugin_daemon 删除 depends on
-```
-
-#### plugin_daemon加入暴露5002端口
-```
- - "${PLUGIN_DAEMON_URL_PORT:-5002}:${PLUGIN_DAEMON_URL_PORT:-5002}"
-```
-
-
-#### 修改network
-```
-networks:
-  # create a network between sandbox, api and ssrf_proxy, and can not access outside.
-  ssrf_proxy_network:
-    driver: bridge
-    internal: true
-    ipam:
-      config:
-        - subnet: 10.247.2.0/24
-  milvus:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.247.3.0/24
-  opensearch-net:
-    driver: bridge
-    internal: true
-    ipam:
-      config:
-        - subnet: 10.247.4.0/24
-  default:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.247.5.0/24
-```
-
-### 初始化数据库
-```
-# postgres数据库
-dify_plugin
-dify
-```
-
-
-
 ## 日常修改：
 
 ### elasticsearch_vector.py
+
  加入int8_hnsw配置
 
 ### CacheEmbedding
+
  设置  max_chunks = 1 ，ada-002不支持批量，应该在插件那里改，暂时先调整这里
 
 ### 新增S3_OSS_PATH
+
 API项目，上传S3新增此路径
