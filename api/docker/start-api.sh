@@ -25,9 +25,6 @@ dockerfile_path="docker/dify-api.Dockerfile"
 
 docker build -f $dockerfile_path --build-arg APP_ENV=$env -t xuhaixing/dify-api:$version .
 
-docker stop dify-api dify-worker
-docker rm dify-api dify-worker
-
 echo "Starting new dify-api container..."
 docker run -d --name dify-api -p 15001:5001 -e MODE=api -e MIGRATION_ENABLED=$MIGRATION_ENABLED xuhaixing/dify-api:$version
 
