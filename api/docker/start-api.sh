@@ -1,7 +1,7 @@
 #!bin/bash
 
 # 启动指令示例：
-# sh docker/start-api.sh 160 1.4.1
+# sh docker/start-api.sh 160 1.4.1 true
 
 env=$1
 version=$2
