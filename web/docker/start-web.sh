@@ -15,7 +15,7 @@ fi
 
 docker rmi xuhaixing/dify-web:$version
 
-dockerfile_path="docker/dify-web.${env}.Dockerfile"
+dockerfile_path="docker/dify-web.Dockerfile"
 
 
 docker build -f $dockerfile_path  --build-arg APP_ENV=$env -t xuhaixing/dify-web:$version .

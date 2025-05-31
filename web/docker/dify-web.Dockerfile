@@ -5,13 +5,12 @@ LABEL maintainer="haixing1993@163.com"
 # if you located in China, you can use aliyun mirror to speed up
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-RUN pnpm config set registry https://registry.npmmirror.com 
-
 RUN apk add --no-cache tzdata
-RUN npm install -g pnpm@10.8.0
+RUN npm install -g pnpm@10.8.0 --registry https://registry.npmmirror.com/
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
+RUN pnpm config set registry https://registry.npmmirror.com 
 
 # install packages
 FROM base AS packages
