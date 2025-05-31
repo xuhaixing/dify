@@ -23,6 +23,7 @@ docker build -f $dockerfile_path -t xuhaixing/dify-api:$version .
 
 docker stop dify-api dify-worker
 docker rm dify-api dify-worker
+docker rmi xuhaixing/dify-api:$version
 
 echo "Starting new dify-api container..."
 docker run -d --name dify-api -p 15001:5001 -e MODE=api -e MIGRATION_ENABLED=$MIGRATION_ENABLED xuhaixing/dify-api:$version
