@@ -13,7 +13,7 @@ if [ -z "$env" ] || [ -z "$version" ]; then
 fi
 
 if [ -z "$MIGRATION_ENABLED" ]; then
-    MIGRATION_ENABLED=false
+    MIGRATION_ENABLED="false"
 fi
 
 dockerfile_path="docker/dify-api.${env}.Dockerfile"
