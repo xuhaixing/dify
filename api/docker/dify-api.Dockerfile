@@ -4,7 +4,10 @@ FROM python:3.12-slim-bookworm AS base
 WORKDIR /app/api
 
 # Install uv
-ENV UV_VERSION=0.6.14
+ENV UV_VERSION=0.7.11
+
+RUN pip install --no-cache-dir uv==${UV_VERSION} -i https://mirrors.aliyun.com/pypi/simple/
+
 
 RUN rm -rf /etc/apt/sources.list.d/*
 ADD docker/sources.list /etc/apt/
@@ -23,8 +26,6 @@ RUN \
         libmagic1 \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
-
-RUN pip install --no-cache-dir uv==${UV_VERSION} -i https://mirrors.aliyun.com/pypi/simple/
 
 
 FROM base AS packages
