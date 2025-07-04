@@ -84,7 +84,26 @@ class OpsTraceProviderConfigMap(dict[str, dict[str, Any]]):
                     "other_keys": ["project", "entity", "endpoint", "host"],
                     "trace_instance": WeaveDataTrace,
                 }
+            case TracingProviderEnum.ARIZE:
+                from core.ops.arize_phoenix_trace.arize_phoenix_trace import ArizePhoenixDataTrace
+                from core.ops.entities.config_entity import ArizeConfig
 
+                return {
+                    "config_class": ArizeConfig,
+                    "secret_keys": ["api_key", "space_id"],
+                    "other_keys": ["project", "endpoint"],
+                    "trace_instance": ArizePhoenixDataTrace,
+                }
+            case TracingProviderEnum.PHOENIX:
+                from core.ops.arize_phoenix_trace.arize_phoenix_trace import ArizePhoenixDataTrace
+                from core.ops.entities.config_entity import PhoenixConfig
+
+                return {
+                    "config_class": PhoenixConfig,
+                    "secret_keys": ["api_key"],
+                    "other_keys": ["project", "endpoint"],
+                    "trace_instance": ArizePhoenixDataTrace,
+                }
             case _:
                 raise KeyError(f"Unsupported tracing provider: {provider}")
 
@@ -251,7 +270,7 @@ class OpsTraceManager:
             provider_config_map[tracing_provider]["trace_instance"],
             provider_config_map[tracing_provider]["config_class"],
         )
-        decrypt_trace_config_key = str(decrypt_trace_config)
+        decrypt_trace_config_key = json.dumps(decrypt_trace_config, sort_keys=True)
         tracing_instance = cls.ops_trace_instances_cache.get(decrypt_trace_config_key)
         if tracing_instance is None:
             # create new tracing_instance and update the cache if it absent
