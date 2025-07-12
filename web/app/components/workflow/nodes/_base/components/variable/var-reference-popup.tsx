@@ -13,6 +13,7 @@ type Props = {
   onChange: (value: ValueSelector, varDetail: Var) => void
   itemWidth?: number
   isSupportFileVar?: boolean
+  zIndex?: number
 }
 const VarReferencePopup: FC<Props> = ({
   vars,
@@ -20,6 +21,7 @@ const VarReferencePopup: FC<Props> = ({
   onChange,
   itemWidth,
   isSupportFileVar = true,
+  zIndex,
 }) => {
   const { t } = useTranslation()
   const docLink = useDocLink()
@@ -44,8 +46,11 @@ const VarReferencePopup: FC<Props> = ({
               description={<div className='system-xs-regular text-text-tertiary'>
                 {t('workflow.variableReference.assignedVarsDescription')}
                 <a target='_blank' rel='noopener noreferrer'
-                   className='text-text-accent-secondary'
-                   href={docLink('/guides/workflow/variables#conversation-variables', { 'zh-Hans': '/guides/workflow/variables#hui-hua-bian-liang' })}>
+                  className='text-text-accent-secondary'
+                  href={docLink('/guides/workflow/variables#conversation-variables', {
+                    'zh-Hans': '/guides/workflow/variables#会话变量',
+                    'ja-JP': '/guides/workflow/variables#会話変数',
+                  })}>
                   {t('workflow.variableReference.conversationVars')}
                 </a>
               </div>}
@@ -57,6 +62,7 @@ const VarReferencePopup: FC<Props> = ({
           onChange={onChange}
           itemWidth={itemWidth}
           isSupportFileVar={isSupportFileVar}
+          zIndex={zIndex}
         />
       }
     </div >
