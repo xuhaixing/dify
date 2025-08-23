@@ -13,15 +13,14 @@ if [ -z "$env" ] || [ -z "$version" ]; then
 fi
 
 
-docker rmi xuhaixing/dify-web:$version
+docker stop dify-web
+docker rm dify-web
+docker rmi $(docker images | grep "dify-web"  | awk '{print $3}')
 
 dockerfile_path="docker/dify-web.Dockerfile"
 
 
 docker build -f $dockerfile_path  --build-arg APP_ENV=$env -t xuhaixing/dify-web:$version .
-
-docker stop dify-web
-docker rm dify-web
 
 echo "Starting new dify-web container..."
 docker run -d --name dify-web -p 13000:3000 xuhaixing/dify-web:$version

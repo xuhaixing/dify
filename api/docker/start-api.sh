@@ -18,7 +18,7 @@ fi
 
 docker stop dify-api dify-worker
 docker rm dify-api dify-worker
-docker rmi xuhaixing/dify-api:$version
+docker rmi $(docker images | grep "dify-api"  | awk '{print $3}')
 
 dockerfile_path="docker/dify-api.Dockerfile"
 
