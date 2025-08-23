@@ -1,11 +1,10 @@
 import logging
 import queue
 from collections.abc import Callable
-from concurrent.futures import ThreadPoolExecutor
-from contextlib import ExitStack
+from concurrent.futures import Future, ThreadPoolExecutor, TimeoutError
 from datetime import timedelta
 from types import TracebackType
-from typing import Any, Generic, Self, TypeVar
+from typing import Any, Generic, Optional, Self, TypeVar
 
 from httpx import HTTPStatusError
 from pydantic import BaseModel
@@ -170,30 +169,47 @@ class BaseSession(
         self._receive_notification_type = receive_notification_type
         self._session_read_timeout_seconds = read_timeout_seconds
         self._in_flight = {}
-        self._exit_stack = ExitStack()
+        # Initialize executor and future to None for proper cleanup checks
+        self._executor: ThreadPoolExecutor | None = None
+        self._receiver_future: Future | None = None
 
     def __enter__(self) -> Self:
-        self._executor = ThreadPoolExecutor()
+        # The thread pool is dedicated to running `_receive_loop`. Setting `max_workers` to 1
+        # ensures no unnecessary threads are created.
+        self._executor = ThreadPoolExecutor(max_workers=1)
         self._receiver_future = self._executor.submit(self._receive_loop)
         return self
 
     def check_receiver_status(self) -> None:
-        if self._receiver_future.done():
+        """`check_receiver_status` ensures that any exceptions raised during the
+        execution of `_receive_loop` are retrieved and propagated."""
+        if self._receiver_future and self._receiver_future.done():
             self._receiver_future.result()
 
     def __exit__(
         self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
     ) -> None:
-        self._exit_stack.close()
         self._read_stream.put(None)
         self._write_stream.put(None)
+
+        # Wait for the receiver loop to finish
+        if self._receiver_future:
+            try:
+                self._receiver_future.result(timeout=5.0)  # Wait up to 5 seconds
+            except TimeoutError:
+                # If the receiver loop is still running after timeout, we'll force shutdown
+                pass
+
+        # Shutdown the executor
+        if self._executor:
+            self._executor.shutdown(wait=True)
 
     def send_request(
         self,
         request: SendRequestT,
         result_type: type[ReceiveResultT],
         request_read_timeout_seconds: timedelta | None = None,
-        metadata: MessageMetadata = None,
+        metadata: Optional[MessageMetadata] = None,
     ) -> ReceiveResultT:
         """
         Sends a request and wait for a response. Raises an McpError if the
@@ -350,7 +366,7 @@ class BaseSession(
                             self._handle_incoming(notification)
                     except Exception as e:
                         # For other validation errors, log and continue
-                        logging.warning(f"Failed to validate notification: {e}. Message was: {message.message.root}")
+                        logging.warning("Failed to validate notification: %s. Message was: %s", e, message.message.root)
                 else:  # Response or error
                     response_queue = self._response_streams.get(message.message.root.id)
                     if response_queue is not None:
@@ -359,7 +375,7 @@ class BaseSession(
                         self._handle_incoming(RuntimeError(f"Server Error: {message}"))
             except queue.Empty:
                 continue
-            except Exception as e:
+            except Exception:
                 logging.exception("Error in message processing loop")
                 raise
 
@@ -371,14 +387,12 @@ class BaseSession(
         If the request is responded to within this method, it will not be
         forwarded on to the message stream.
         """
-        pass
 
     def _received_notification(self, notification: ReceiveNotificationT) -> None:
         """
         Can be overridden by subclasses to handle a notification without needing
         to listen on the message stream.
         """
-        pass
 
     def send_progress_notification(
         self, progress_token: str | int, progress: float, total: float | None = None
@@ -387,11 +401,9 @@ class BaseSession(
         Sends a progress notification for a request that is currently being
         processed.
         """
-        pass
 
     def _handle_incoming(
         self,
         req: RequestResponder[ReceiveRequestT, SendResultT] | ReceiveNotificationT | Exception,
     ) -> None:
         """A generic handler for incoming messages. Overwritten by subclasses."""
-        pass

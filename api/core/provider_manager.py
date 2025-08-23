@@ -1,3 +1,4 @@
+import contextlib
 import json
 from collections import defaultdict
 from json import JSONDecodeError
@@ -275,7 +276,7 @@ class ProviderManager:
         # Get the corresponding TenantDefaultModel record
         default_model = (
             db.session.query(TenantDefaultModel)
-            .filter(
+            .where(
                 TenantDefaultModel.tenant_id == tenant_id,
                 TenantDefaultModel.model_type == model_type.to_origin_model_type(),
             )
@@ -367,7 +368,7 @@ class ProviderManager:
         # Get the list of available models from get_configurations and check if it is LLM
         default_model = (
             db.session.query(TenantDefaultModel)
-            .filter(
+            .where(
                 TenantDefaultModel.tenant_id == tenant_id,
                 TenantDefaultModel.model_type == model_type.to_origin_model_type(),
             )
@@ -523,7 +524,7 @@ class ProviderManager:
                     # Init trial provider records if not exists
                     if ProviderQuotaType.TRIAL not in provider_quota_to_provider_record_dict:
                         try:
-                            # FIXME ignore the type errork, onyl TrialHostingQuota has limit need to change the logic
+                            # FIXME ignore the type error, only TrialHostingQuota has limit need to change the logic
                             new_provider_record = Provider(
                                 tenant_id=tenant_id,
                                 # TODO: Use provider name with prefix after the data migration.
@@ -541,7 +542,7 @@ class ProviderManager:
                             db.session.rollback()
                             existed_provider_record = (
                                 db.session.query(Provider)
-                                .filter(
+                                .where(
                                     Provider.tenant_id == tenant_id,
                                     Provider.provider_name == ModelProviderID(provider_name).provider_name,
                                     Provider.provider_type == ProviderType.SYSTEM.value,
@@ -624,14 +625,12 @@ class ProviderManager:
 
                 for variable in provider_credential_secret_variables:
                     if variable in provider_credentials:
-                        try:
+                        with contextlib.suppress(ValueError):
                             provider_credentials[variable] = encrypter.decrypt_token_with_decoding(
                                 provider_credentials.get(variable) or "",  # type: ignore
                                 self.decoding_rsa_key,
                                 self.decoding_cipher_rsa,
                             )
-                        except ValueError:
-                            pass
 
                 # cache provider credentials
                 provider_credentials_cache.set(credentials=provider_credentials)
@@ -672,14 +671,12 @@ class ProviderManager:
 
                 for variable in model_credential_secret_variables:
                     if variable in provider_model_credentials:
-                        try:
+                        with contextlib.suppress(ValueError):
                             provider_model_credentials[variable] = encrypter.decrypt_token_with_decoding(
                                 provider_model_credentials.get(variable),
                                 self.decoding_rsa_key,
                                 self.decoding_cipher_rsa,
                             )
-                        except ValueError:
-                            pass
 
                 # cache provider model credentials
                 provider_model_credentials_cache.set(credentials=provider_model_credentials)

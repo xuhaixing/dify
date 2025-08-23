@@ -20,7 +20,7 @@ import { useRenderI18nObject } from '@/hooks/use-i18n'
 import type { NodeOutPutVar } from '../../../types'
 import type { Node } from 'reactflow'
 import type { PluginMeta } from '@/app/components/plugins/types'
-import { noop } from 'lodash'
+import { noop } from 'lodash-es'
 import { useDocLink } from '@/context/i18n'
 
 export type Strategy = {
@@ -87,6 +87,7 @@ export const AgentStrategy = memo((props: AgentStrategyProps) => {
             headerClassName='bg-transparent px-0 text-text-secondary system-sm-semibold-uppercase'
             containerBackgroundClassName='bg-transparent'
             gradientBorder={false}
+            nodeId={nodeId}
             isSupportPromptGenerator={!!def.auto_generate?.type}
             titleTooltip={schema.tooltip && renderI18nObject(schema.tooltip)}
             editorContainerClassName='px-0'
