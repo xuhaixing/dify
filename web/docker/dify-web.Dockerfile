@@ -5,12 +5,15 @@ LABEL maintainer="haixing1993@163.com"
 # if you located in China, you can use aliyun mirror to speed up
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
+# if you located in China, you can use taobao registry to speed up
+RUN npm config set registry https://registry.npmmirror.com
+
 RUN apk add --no-cache tzdata
 RUN corepack enable
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+ENV NEXT_PUBLIC_BASE_PATH=
 
-RUN pnpm config set registry https://registry.npmmirror.com 
 
 # install packages
 FROM base AS packages
@@ -22,9 +25,6 @@ COPY pnpm-lock.yaml .
 
 # Use packageManager from package.json
 RUN corepack install
-
-# if you located in China, you can use taobao registry to speed up
-# RUN pnpm install --frozen-lockfile --registry https://registry.npmmirror.com/
 
 RUN pnpm install --frozen-lockfile
 
@@ -38,7 +38,7 @@ ARG APP_ENV=160
 RUN mv docker/$APP_ENV.env .env
 
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN pnpm build
+RUN pnpm build:docker
 
 
 # production stage
