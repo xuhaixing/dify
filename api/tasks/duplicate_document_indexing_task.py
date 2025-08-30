@@ -2,7 +2,7 @@ import logging
 import time
 
 import click
-from celery import shared_task  # type: ignore
+from celery import shared_task
 
 from configs import dify_config
 from core.indexing_runner import DocumentIsPausedError, IndexingRunner
@@ -11,6 +11,8 @@ from extensions.ext_database import db
 from libs.datetime_utils import naive_utc_now
 from models.dataset import Dataset, Document, DocumentSegment
 from services.feature_service import FeatureService
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task(queue="dataset")
@@ -27,7 +29,7 @@ def duplicate_document_indexing_task(dataset_id: str, document_ids: list):
 
     dataset = db.session.query(Dataset).where(Dataset.id == dataset_id).first()
     if dataset is None:
-        logging.info(click.style(f"Dataset not found: {dataset_id}", fg="red"))
+        logger.info(click.style(f"Dataset not found: {dataset_id}", fg="red"))
         db.session.close()
         return
 
@@ -63,7 +65,7 @@ def duplicate_document_indexing_task(dataset_id: str, document_ids: list):
         db.session.close()
 
     for document_id in document_ids:
-        logging.info(click.style(f"Start process document: {document_id}", fg="green"))
+        logger.info(click.style(f"Start process document: {document_id}", fg="green"))
 
         document = (
             db.session.query(Document).where(Document.id == document_id, Document.dataset_id == dataset_id).first()
@@ -95,10 +97,10 @@ def duplicate_document_indexing_task(dataset_id: str, document_ids: list):
         indexing_runner = IndexingRunner()
         indexing_runner.run(documents)
         end_at = time.perf_counter()
-        logging.info(click.style(f"Processed dataset: {dataset_id} latency: {end_at - start_at}", fg="green"))
+        logger.info(click.style(f"Processed dataset: {dataset_id} latency: {end_at - start_at}", fg="green"))
     except DocumentIsPausedError as ex:
-        logging.info(click.style(str(ex), fg="yellow"))
+        logger.info(click.style(str(ex), fg="yellow"))
     except Exception:
-        logging.exception("duplicate_document_indexing_task failed, dataset_id: %s", dataset_id)
+        logger.exception("duplicate_document_indexing_task failed, dataset_id: %s", dataset_id)
     finally:
         db.session.close()

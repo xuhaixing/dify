@@ -6,7 +6,7 @@ from pathlib import Path
 
 import click
 import pandas as pd
-from celery import shared_task  # type: ignore
+from celery import shared_task
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -20,6 +20,8 @@ from libs.datetime_utils import naive_utc_now
 from models.dataset import Dataset, Document, DocumentSegment
 from models.model import UploadFile
 from services.vector_service import VectorService
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task(queue="dataset")
@@ -42,7 +44,7 @@ def batch_create_segment_to_index_task(
 
     Usage: batch_create_segment_to_index_task.delay(job_id, upload_file_id, dataset_id, document_id, tenant_id, user_id)
     """
-    logging.info(click.style(f"Start batch create segment jobId: {job_id}", fg="green"))
+    logger.info(click.style(f"Start batch create segment jobId: {job_id}", fg="green"))
     start_at = time.perf_counter()
 
     indexing_cache_key = f"segment_batch_import_{job_id}"
@@ -142,14 +144,14 @@ def batch_create_segment_to_index_task(
         db.session.commit()
         redis_client.setex(indexing_cache_key, 600, "completed")
         end_at = time.perf_counter()
-        logging.info(
+        logger.info(
             click.style(
                 f"Segment batch created job: {job_id} latency: {end_at - start_at}",
                 fg="green",
             )
         )
     except Exception:
-        logging.exception("Segments batch created index failed")
+        logger.exception("Segments batch created index failed")
         redis_client.setex(indexing_cache_key, 600, "error")
     finally:
         db.session.close()
