@@ -3,7 +3,7 @@ import os
 import urllib.parse
 import uuid
 from collections.abc import Callable, Mapping, Sequence
-from typing import Any, cast
+from typing import Any
 
 import httpx
 from sqlalchemy import select
@@ -258,7 +258,6 @@ def _get_remote_file_info(url: str):
         mime_type = ""
 
     resp = ssrf_proxy.head(url, follow_redirects=True)
-    resp = cast(httpx.Response, resp)
     if resp.status_code == httpx.codes.OK:
         if content_disposition := resp.headers.get("Content-Disposition"):
             filename = str(content_disposition.split("filename=")[-1].strip('"'))
@@ -404,7 +403,7 @@ class StorageKeyLoader:
     This loader is batched, the database query count is constant regardless of the input size.
     """
 
-    def __init__(self, session: Session, tenant_id: str) -> None:
+    def __init__(self, session: Session, tenant_id: str):
         self._session = session
         self._tenant_id = tenant_id
 
